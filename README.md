@@ -60,12 +60,6 @@ options:
 
 ``` r
 adam <- search_station("Amsterdam", n_res = 1)
-#> Waiting 11s for throttling delay ■■■
-#> Waiting 11s for throttling delay ■■■■■
-#> Waiting 11s for throttling delay ■■■■■■■■■■■■■
-#> Waiting 11s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■
-#> Waiting 11s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-#> Waiting 11s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 adam
 #> # A tibble: 1 × 2
 #>   name                         id                                               
@@ -82,37 +76,6 @@ next_tuesday <- bahn_search(
   start = "2023-10-03T05:00:00",
   end =  "2023-10-03T19:00:00"
 )
-#> Waiting 12s for throttling delay ■■■■■■
-#> Waiting 12s for throttling delay ■■■■■■■■■■■■■■
-#> Waiting 12s for throttling delay ■■■■■■■■■■■■■■■■■■■■■
-#> Waiting 12s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-#> Waiting 12s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-#> ⠙ Getting results 1 done (0.066/s) | 15.2s
-#> Waiting 9s for throttling delay ■■■■■■■
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-#> ⠙ Getting results 1 done (0.066/s) | 15.2sWaiting 10s for throttling delay ■■■■                            
-#> Waiting 10s for throttling delay ■■■■■■■■■■                      
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■             
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■    
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 
-#> ⠙ Getting results 1 done (0.066/s) | 15.2s⠹ Getting results 3 done (0.078/s) | 38.5s
-#> Waiting 9s for throttling delay ■■■■■■■■■■                      
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■■■■            
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  
-#> Waiting 9s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 
-#> ⠹ Getting results 3 done (0.078/s) | 38.5sWaiting 10s for throttling delay ■■■■                            
-#> Waiting 10s for throttling delay ■■■■■■■■■■■                     
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■             
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 
-#> ⠹ Getting results 3 done (0.078/s) | 38.5sWaiting 10s for throttling delay ■■■■                            
-#> Waiting 10s for throttling delay ■■■■■■■■■■■                     
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■            
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■   
-#> Waiting 10s for throttling delay ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 
-#> ⠹ Getting results 3 done (0.078/s) | 38.5s⠹ Getting results 5 done (0.067/s) | 1m 14.4s
 next_tuesday
 #> # A tibble: 6 × 6
 #>   id         duration             price changes start              
@@ -135,16 +98,6 @@ So what is the cheapest connection? Easy to see with some `R` commands
 
 ``` r
 library(tidyverse)
-#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-#> ✔ dplyr     1.1.3     ✔ readr     2.1.4
-#> ✔ forcats   1.0.0     ✔ stringr   1.5.0
-#> ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
-#> ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-#> ✔ purrr     1.0.2     
-#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-#> ✖ dplyr::filter() masks stats::filter()
-#> ✖ dplyr::lag()    masks stats::lag()
-#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 next_tuesday |> 
   slice_min(price, n = 1) |> 
   select(-id)
