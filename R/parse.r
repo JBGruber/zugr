@@ -5,17 +5,20 @@ parse_response <- function(x) {
   start <- NULL
   end <- NULL
   duration <- NULL
-  x <- unlist(x, recursive = FALSE)
-  purrr::map(x[["verbindungen"]], function(v) {
-    n_abschnitt <- length(v[["verbindungsAbschnitte"]])
-    tibble::tibble(
-      id = v[["tripId"]],
-      duration = v[["verbindungsDauerInSeconds"]],
-      price = v[["angebotsPreis"]][["betrag"]],
-      changes = v[["umstiegsAnzahl"]],
-      start = v[["verbindungsAbschnitte"]][[1]][["ankunftsZeitpunkt"]],
-      end = v[["verbindungsAbschnitte"]][[n_abschnitt]][["ankunftsZeitpunkt"]]
-    )
+  # TODO: better way to parse this?
+  purrr::map(x, function(r) {
+    purrr::map(r[["verbindungen"]], function(v) {
+      n_abschnitt <- length(v[["verbindungsAbschnitte"]])
+      tibble::tibble(
+        id = v[["tripId"]],
+        duration = v[["verbindungsDauerInSeconds"]],
+        price = v[["angebotsPreis"]][["betrag"]],
+        changes = v[["umstiegsAnzahl"]],
+        start = v[["verbindungsAbschnitte"]][[1]][["ankunftsZeitpunkt"]],
+        end = v[["verbindungsAbschnitte"]][[n_abschnitt]][["ankunftsZeitpunkt"]]
+      )
+    }) |>
+      dplyr::bind_rows()
   }) |>
     dplyr::bind_rows() |>
     dplyr::mutate(
