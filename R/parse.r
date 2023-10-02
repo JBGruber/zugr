@@ -14,7 +14,7 @@ parse_response <- function(x) {
         duration = v[["verbindungsDauerInSeconds"]],
         price = v[["angebotsPreis"]][["betrag"]],
         changes = v[["umstiegsAnzahl"]],
-        start = v[["verbindungsAbschnitte"]][[1]][["ankunftsZeitpunkt"]],
+        start = v[["verbindungsAbschnitte"]][[1]][["abfahrtsZeitpunkt"]],
         end = v[["verbindungsAbschnitte"]][[n_abschnitt]][["ankunftsZeitpunkt"]]
       )
     }) |>
