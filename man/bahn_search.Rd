@@ -4,7 +4,14 @@
 \alias{bahn_search}
 \title{Search connections}
 \usage{
-bahn_search(from, to, start = Sys.time(), end = start + 120, parse = TRUE)
+bahn_search(
+  from,
+  to,
+  start = Sys.time(),
+  end = start + 120,
+  throttle = 5,
+  parse = TRUE
+)
 }
 \arguments{
 \item{from, to}{The departure/arrival station id (obtained via
@@ -15,6 +22,8 @@ depature).}
 
 \item{end}{Character or Datetime. The end time of the search (latest
 arrival).}
+
+\item{throttle}{how many request per minute to perform.}
 
 \item{parse}{Logical. Whether to parse the response (otherwise you will get
 the nested list returned by the API directly. Currently not all data is

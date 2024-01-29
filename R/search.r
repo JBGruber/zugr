@@ -6,6 +6,7 @@
 #'   depature).
 #' @param end Character or Datetime. The end time of the search (latest
 #'   arrival).
+#' @param throttle how many request per minute to perform.
 #' @param parse Logical. Whether to parse the response (otherwise you will get
 #'   the nested list returned by the API directly. Currently not all data is
 #'   parsed into the returned tibble (just what I tought was important).
@@ -32,6 +33,7 @@ bahn_search <- function(from,
                         to,
                         start = Sys.time(),
                         end = start + 120,
+                        throttle = 5,
                         parse = TRUE) {
 
   if (is.character(start)) start <- lubridate::ymd_hms(start)
@@ -61,10 +63,10 @@ bahn_search <- function(from,
   page <- 1
   cli::cli_progress_bar("Getting results")
 
-  resp <- get_results(req_body)
+  resp <- get_results(req_body, throttle = throttle)
   res[[page]] <- resp
 
-  while (get_last(resp) < end) {
+  while (isTRUE(get_last(resp) < end)) {
     cli::cli_progress_update()
     page <- page + 1
     req_body[["pagingReference"]] <- resp$verbindungReference$later
