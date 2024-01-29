@@ -21,7 +21,9 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 Just a small package that wraps the Fahrplan API of the German train company [db](https://www.bahn.de).
-The main idea is to be able to be able to cast your net a bit wider in cases when you are flexible to go on a different hour, day, or week.
+The main idea is to be able to cast your net a bit wider in cases when you are flexible to go on a different hour, day, or week.
+
+**Note: I do not have time to actively develop this package. It should be seen as a prototype. If you want to take it over as maintainer to develop it futher, let me know**
 
 ## Installation
 
@@ -44,7 +46,7 @@ The first step is to get the station ID for the main stations in Wiesbaden and A
 
 ```{r example}
 library(zugr)
-wi <- search_station("Wiesbaden")
+wi <- search_station("Wiesbaden, Manteuffelstr. 5")
 wi
 ```
 
@@ -53,7 +55,7 @@ Now Amsterdam.
 Here I don't need as many options:
 
 ```{r}
-adam <- search_station("Amsterdam", n_res = 1)
+adam <- search_station("Amsterdam", n_res = 2)
 adam
 ```
 
@@ -63,8 +65,8 @@ Now I can make a search for next Tuesday Morning (as of writing this):
 next_tuesday <- bahn_search(
   from = wi$id[1],
   to = adam$id[1],
-  start = "2023-10-03T05:00:00",
-  end =  "2023-10-03T19:00:00"
+  start = "2024-01-30T05:00:00",
+  end =  "2024-01-30T19:00:00"
 )
 next_tuesday
 ```
@@ -82,7 +84,7 @@ next_tuesday |>
   select(-id)
 ```
 
-With 4 connections and more than 6 hours, this is a rather terrible connections.
+With 5 connections and more than 6 hours, this is a rather terrible connections.
 It is cheap though.
 Let's see s quick visualisation instead:
 
@@ -90,7 +92,9 @@ Let's see s quick visualisation instead:
 next_tuesday |> 
   # some connections include trains from different companies, the prices for
   # these are not oncluded
-  filter(!is.na(price)) |>
+  filter(!is.na(price),
+         !duplicated(start),
+         start < "2024-01-30 11:00:00") |>
   ggplot(aes(x = start, y = price, label = changes, fill = duration)) +
   geom_col() +
   geom_text(aes(y = price / 2), colour = "white") +
@@ -102,3 +106,78 @@ next_tuesday |>
 ```
 
 With more data, this gets a little more interesting.
+
+```{r echo=FALSE}
+if (!file.exists("february.rds")) {
+  february <- bahn_search(
+    from = wi$id[1],
+    to = adam$id[1],
+    start = "2024-02-01T00:00:00",
+    end =  "2024-03-01T23:59:59"
+  )
+  saveRDS(february, "february.rds")
+} else {
+  february <- readRDS("february.rds")
+}
+```
+
+```{r eval=FALSE}
+february <- bahn_search(
+  from = wi$id[1],
+  to = adam$id[1],
+  start = "2024-02-01T00:00:00",
+  end =  "2024-03-01T23:59:59"
+)
+```
+
+Let's see which days would be especially cheap:
+
+```{r}
+february |> 
+  mutate(date = as.Date(start)) |> 
+  group_by(date) |> 
+  slice_min(price, n = 1) |> 
+  ggplot(aes(x = date, y = price)) +
+  geom_col() +
+  labs(x = NULL, y = NULL, 
+       title = "Cheapest price per day") +
+  scale_y_continuous(labels = function(x) paste0(x, "€")) +
+  theme_minimal()
+```
+
+This is all nice, but let's only take into account connections I would actually consider:
+
+```{r}
+february |> 
+  filter(changes <= 3) |> 
+  mutate(date = as.Date(start),
+         hour(start) > 5) |> 
+  group_by(date) |> 
+  slice_min(price, n = 1) |> 
+  ggplot(aes(x = date, y = price)) +
+  geom_col() +
+  labs(x = NULL, y = NULL, 
+       title = "Cheapest price per day with <= 3 changes") +
+  scale_y_continuous(labels = function(x) paste0(x, "€")) +
+  theme_minimal()
+```
+
+It also looks like historic searches are possible.
+
+```{r}
+historic <- bahn_search(
+  from = wi$id[1],
+  to = adam$id[1],
+  start = "2024-01-22T05:00:00",
+  end =  "2024-01-22T19:00:00",
+  parse = FALSE
+)
+```
+
+I do not parse the results here to be able to explore the data a bit more (parsing only extracts the information that I found intresting on first glance).
+However, the results contain a message that the connection is in the past and information about price and demand seem absent.
+
+```{r}
+historic[[1]][["verbindungen"]][[1]][["meldungenAsObject"]][[1]][["nachrichtLang"]]
+```
+
