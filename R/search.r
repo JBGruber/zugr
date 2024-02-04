@@ -91,12 +91,13 @@ bahn_search <- function(from,
 #'
 #' @param q character string, query to search for station.
 #' @param n_res number of results to return (integer or character).
+#' @inheritParams bahn_search
 #' @return tibble, containing station name and id
 #' @export
 #'
 #' @examples
 #' search_station("Frankfurt")
-search_station <- function(q, n_res = 10L) {
+search_station <- function(q, n_res = 10L, throttle = 5) {
   resp <- httr2::request("https://www.bahn.de/web/api/reiseloesung/orte") |>
     httr2::req_url_query(
       suchbegriff = q,
@@ -106,7 +107,7 @@ search_station <- function(q, n_res = 10L) {
     httr2::req_headers(
       "user-agent" = "bahnr"
     ) |>
-    httr2::req_throttle(5 / 60) |>
+    httr2::req_throttle(throttle / 60) |>
     httr2::req_perform() |>
     httr2::resp_body_json()
 

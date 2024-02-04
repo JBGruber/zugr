@@ -4,12 +4,14 @@
 \alias{search_station}
 \title{Search Station}
 \usage{
-search_station(q, n_res = 10L)
+search_station(q, n_res = 10L, throttle = 5)
 }
 \arguments{
 \item{q}{character string, query to search for station.}
 
 \item{n_res}{number of results to return (integer or character).}
+
+\item{throttle}{how many request per minute to perform.}
 }
 \value{
 tibble, containing station name and id

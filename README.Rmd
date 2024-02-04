@@ -23,7 +23,8 @@ knitr::opts_chunk$set(
 Just a small package that wraps the Fahrplan API of the German train company [db](https://www.bahn.de).
 The main idea is to be able to cast your net a bit wider in cases when you are flexible to go on a different hour, day, or week.
 
-**Note: I do not have time to actively develop this package. It should be seen as a prototype. If you want to take it over as maintainer to develop it futher, let me know**
+> [!NOTE]
+> I do not have time to actively develop this package. It should be seen as a prototype. If you want to take it over as maintainer to develop it further, [let me know](mailto:johannesb.gruber@gmail.com).
 
 ## Installation
 
@@ -46,7 +47,7 @@ The first step is to get the station ID for the main stations in Wiesbaden and A
 
 ```{r example}
 library(zugr)
-wi <- search_station("Wiesbaden, Manteuffelstr. 5")
+wi <- search_station("Wiesbaden HBF")
 wi
 ```
 
@@ -65,8 +66,8 @@ Now I can make a search for next Tuesday Morning (as of writing this):
 next_tuesday <- bahn_search(
   from = wi$id[1],
   to = adam$id[1],
-  start = "2024-01-30T05:00:00",
-  end =  "2024-01-30T19:00:00"
+  start = "2024-02-06T05:00:00",
+  end =  "2024-02-06T19:00:00"
 )
 next_tuesday
 ```
@@ -91,10 +92,10 @@ Let's see s quick visualisation instead:
 ```{r}
 next_tuesday |> 
   # some connections include trains from different companies, the prices for
-  # these are not oncluded
+  # these are not included
   filter(!is.na(price),
          !duplicated(start),
-         start < "2024-01-30 11:00:00") |>
+         start < "2024-02-06 11:00:00") |> # exclude some connections for readability
   ggplot(aes(x = start, y = price, label = changes, fill = duration)) +
   geom_col() +
   geom_text(aes(y = price / 2), colour = "white") +
@@ -108,35 +109,35 @@ next_tuesday |>
 With more data, this gets a little more interesting.
 
 ```{r echo=FALSE}
-if (!file.exists("february.rds")) {
-  february <- bahn_search(
+if (!file.exists("march.rds")) {
+  march <- bahn_search(
     from = wi$id[1],
     to = adam$id[1],
-    start = "2024-02-01T00:00:00",
-    end =  "2024-03-01T23:59:59"
+    start = "2024-03-01T00:00:00",
+    end =  "2024-04-01T00:00:00"
   )
-  saveRDS(february, "february.rds")
+  saveRDS(march, "march.rds")
 } else {
-  february <- readRDS("february.rds")
+  march <- readRDS("march.rds")
 }
 ```
 
 ```{r eval=FALSE}
-february <- bahn_search(
+march <- bahn_search(
   from = wi$id[1],
   to = adam$id[1],
-  start = "2024-02-01T00:00:00",
-  end =  "2024-03-01T23:59:59"
+  start = "2024-03-01T00:00:00",
+  end =  "2024-04-01T00:00:00"
 )
 ```
 
 Let's see which days would be especially cheap:
 
 ```{r}
-february |> 
+march |> 
   mutate(date = as.Date(start)) |> 
   group_by(date) |> 
-  slice_min(price, n = 1) |> 
+  slice_min(price, n = 1, with_ties = FALSE) |> 
   ggplot(aes(x = date, y = price)) +
   geom_col() +
   labs(x = NULL, y = NULL, 
@@ -145,19 +146,22 @@ february |>
   theme_minimal()
 ```
 
+So I could get a train on any day in March for the price of 32.90€.
 This is all nice, but let's only take into account connections I would actually consider:
 
 ```{r}
-february |> 
-  filter(changes <= 3) |> 
+march |> 
+  filter(changes <= 2,
+         hour(start) > 7) |> 
   mutate(date = as.Date(start),
-         hour(start) > 5) |> 
+         weekday = wday(start, label = TRUE)) |> 
   group_by(date) |> 
-  slice_min(price, n = 1) |> 
-  ggplot(aes(x = date, y = price)) +
+  slice_min(price, n = 1, with_ties = FALSE) |> 
+  ggplot(aes(x = date, y = price, label = weekday)) +
   geom_col() +
+  geom_text(hjust = 0, angle = 90) +
   labs(x = NULL, y = NULL, 
-       title = "Cheapest price per day with <= 3 changes") +
+       title = "Cheapest price per day with <= 2 changes and after 7am") +
   scale_y_continuous(labels = function(x) paste0(x, "€")) +
   theme_minimal()
 ```
@@ -174,7 +178,7 @@ historic <- bahn_search(
 )
 ```
 
-I do not parse the results here to be able to explore the data a bit more (parsing only extracts the information that I found intresting on first glance).
+I do not parse the results here to be able to explore the data a bit more (parsing only extracts the information that I found interesting on first glance).
 However, the results contain a message that the connection is in the past and information about price and demand seem absent.
 
 ```{r}

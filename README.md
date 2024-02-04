@@ -14,9 +14,11 @@ company [db](https://www.bahn.de). The main idea is to be able to cast
 your net a bit wider in cases when you are flexible to go on a different
 hour, day, or week.
 
-**Note: I do not have time to actively develop this package. It should
-be seen as a prototype. If you want to take it over as maintainer to
-develop it futher, let me know**
+> [!NOTE]
+> I do not have time to actively develop this package. It
+> should be seen as a prototype. If you want to take it over as
+> maintainer to develop it further, [let me
+> know](mailto:johannesb.gruber@gmail.com).
 
 ## Installation
 
@@ -42,21 +44,21 @@ Wiesbaden and Amsterdam:
 
 ``` r
 library(zugr)
-wi <- search_station("Wiesbaden, Manteuffelstr. 5")
+wi <- search_station("Wiesbaden HBF")
 wi
 #> # A tibble: 10 × 2
-#>    name                                        id                               
-#>    <chr>                                       <chr>                            
-#>  1 Wiesbaden, Manteuffelstraße 5               A=2@O=Wiesbaden, Manteuffelstraß…
-#>  2 Wiesbaden, Scheffelstraße 5                 A=2@O=Wiesbaden, Scheffelstraße …
-#>  3 Wiesbaden - Delkenheim, Eifelstraße 5       A=2@O=Wiesbaden - Delkenheim, Ei…
-#>  4 Wiesbaden - Mainz-Kostheim, Teufelssprung 5 A=2@O=Wiesbaden - Mainz-Kostheim…
-#>  5 Wiesbaden, Reichsapfelstraße 5              A=2@O=Wiesbaden, Reichsapfelstra…
-#>  6 Wiesbaden, Teufelsgraben                    A=2@O=Wiesbaden, Teufelsgraben@X…
-#>  7 Wiesbaden, Scheffelstuben (Gastronomie)     A=4@O=Wiesbaden, Scheffelstuben …
-#>  8 Wiesbaden, Eifelstraße                      A=2@O=Wiesbaden, Eifelstraße@X=8…
-#>  9 Bad Kreuznach, Manteuffelstraße 4           A=2@O=Bad Kreuznach, Manteuffels…
-#> 10 Scheffelstraße, Wiesbaden                   A=1@O=Scheffelstraße, Wiesbaden@…
+#>    name                   id                                                    
+#>    <chr>                  <chr>                                                 
+#>  1 Wiesbaden Hbf          A=1@O=Wiesbaden Hbf@X=8243729@Y=50070788@U=80@L=80002…
+#>  2 Wiesbaden-Mainz-Kast   A=1@O=Wiesbaden-Mainz-Kast@X=8283173@Y=50006578@U=80@…
+#>  3 Wiesbaden-Auringen-M   A=1@O=Wiesbaden-Auringen-M@X=8332092@Y=50113604@U=80@…
+#>  4 Wiesbaden-Biebrich     A=1@O=Wiesbaden-Biebrich@X=8236420@Y=50048827@U=80@L=…
+#>  5 Wiesbaden-Erbenheim    A=1@O=Wiesbaden-Erbenheim@X=8295048@Y=50054410@U=80@L…
+#>  6 Wiesbaden Ost          A=1@O=Wiesbaden Ost@X=8256295@Y=50041411@U=80@L=80064…
+#>  7 Wiesbaden-Igstadt      A=1@O=Wiesbaden-Igstadt@X=8325638@Y=50082582@U=80@L=8…
+#>  8 Wiesbaden-Schierstein  A=1@O=Wiesbaden-Schierstein@X=8194602@Y=50047587@U=80…
+#>  9 Wiesbaden-Chausseehaus A=1@O=Wiesbaden-Chausseehaus@X=8168794@Y=50097765@U=8…
+#> 10 Wiesbaden-Biebr. KD    A=1@O=Wiesbaden-Biebr. KD@X=8236600@Y=50036234@U=80@L…
 ```
 
 The first one is what I need! Now Amsterdam. Here I don’t need as many
@@ -78,23 +80,23 @@ Now I can make a search for next Tuesday Morning (as of writing this):
 next_tuesday <- bahn_search(
   from = wi$id[1],
   to = adam$id[1],
-  start = "2024-01-30T05:00:00",
-  end =  "2024-01-30T19:00:00"
+  start = "2024-02-06T05:00:00",
+  end =  "2024-02-06T19:00:00"
 )
 next_tuesday
 #> # A tibble: 28 × 6
 #>    id         duration             price changes start              
 #>    <chr>      <Duration>           <dbl>   <int> <dttm>             
-#>  1 4934becd_3 21720s (~6.03 hours)  93.4       4 2024-01-30 05:27:00
-#>  2 a2c0662a_3 18600s (~5.17 hours) 113.        2 2024-01-30 06:19:00
-#>  3 bfacedce_3 21960s (~6.1 hours)  103.        4 2024-01-30 06:29:00
-#>  4 6ee9a9d4_3 23760s (~6.6 hours)   67.4       5 2024-01-30 06:29:00
-#>  5 2fc08538_3 21960s (~6.1 hours)  113.        5 2024-01-30 06:59:00
-#>  6 86175a2c_3 21600s (~6 hours)     93.4       3 2024-01-30 07:29:00
-#>  7 a21cc91e_3 18600s (~5.17 hours) 113.        2 2024-01-30 08:19:00
-#>  8 e62269ec_3 21960s (~6.1 hours)  103.        4 2024-01-30 08:29:00
-#>  9 e7e3e886_3 23760s (~6.6 hours)   71.4       6 2024-01-30 08:29:00
-#> 10 5466ce48_3 20760s (~5.77 hours) 103.        5 2024-01-30 08:49:00
+#>  1 12f92732_3 16140s (~4.48 hours)  79.9       1 2024-02-06 05:00:00
+#>  2 b5b084ea_3 20460s (~5.68 hours)  85.9       2 2024-02-06 05:48:00
+#>  3 c2154884_3 17400s (~4.83 hours)  99.9       1 2024-02-06 06:39:00
+#>  4 29be3e05_3 20820s (~5.78 hours)  57.9       3 2024-02-06 06:48:00
+#>  5 8f800bd9_3 22620s (~6.28 hours)  37.9       4 2024-02-06 06:48:00
+#>  6 03e0ebdd_3 20820s (~5.78 hours)  83.9       4 2024-02-06 07:18:00
+#>  7 a5c4f48e_3 20460s (~5.68 hours)  78.9       2 2024-02-06 07:48:00
+#>  8 705c73ef_3 17400s (~4.83 hours)  89.9       1 2024-02-06 08:39:00
+#>  9 73acf6a5_3 20820s (~5.78 hours)  83.9       3 2024-02-06 08:48:00
+#> 10 6a9b423e_3 22620s (~6.28 hours)  47.9       5 2024-02-06 08:48:00
 #> # ℹ 18 more rows
 #> # ℹ 1 more variable: end <dttm>
 ```
@@ -111,11 +113,10 @@ library(tidyverse)
 next_tuesday |> 
   slice_min(price, n = 1) |> 
   select(-id)
-#> # A tibble: 2 × 5
-#>   duration            price changes start               end                
-#>   <Duration>          <dbl>   <int> <dttm>              <dttm>             
-#> 1 23760s (~6.6 hours)  67.4       5 2024-01-30 06:29:00 2024-01-30 13:05:00
-#> 2 23760s (~6.6 hours)  67.4       6 2024-01-30 12:29:00 2024-01-30 19:05:00
+#> # A tibble: 1 × 5
+#>   duration             price changes start               end                
+#>   <Duration>           <dbl>   <int> <dttm>              <dttm>             
+#> 1 22620s (~6.28 hours)  37.9       4 2024-02-06 06:48:00 2024-02-06 13:05:00
 ```
 
 With 5 connections and more than 6 hours, this is a rather terrible
@@ -125,10 +126,10 @@ instead:
 ``` r
 next_tuesday |> 
   # some connections include trains from different companies, the prices for
-  # these are not oncluded
+  # these are not included
   filter(!is.na(price),
          !duplicated(start),
-         start < "2024-01-30 11:00:00") |>
+         start < "2024-02-06 11:00:00") |> # exclude some connections for readability
   ggplot(aes(x = start, y = price, label = changes, fill = duration)) +
   geom_col() +
   geom_text(aes(y = price / 2), colour = "white") +
@@ -144,21 +145,21 @@ next_tuesday |>
 With more data, this gets a little more interesting.
 
 ``` r
-february <- bahn_search(
+march <- bahn_search(
   from = wi$id[1],
   to = adam$id[1],
-  start = "2024-02-01T00:00:00",
-  end =  "2024-03-01T23:59:59"
+  start = "2024-03-01T00:00:00",
+  end =  "2024-04-01T00:00:00"
 )
 ```
 
 Let’s see which days would be especially cheap:
 
 ``` r
-february |> 
+march |> 
   mutate(date = as.Date(start)) |> 
   group_by(date) |> 
-  slice_min(price, n = 1) |> 
+  slice_min(price, n = 1, with_ties = FALSE) |> 
   ggplot(aes(x = date, y = price)) +
   geom_col() +
   labs(x = NULL, y = NULL, 
@@ -169,20 +170,23 @@ february |>
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
-This is all nice, but let’s only take into account connections I would
+So I could get a train on any day in March for the price of 32.90€. This
+is all nice, but let’s only take into account connections I would
 actually consider:
 
 ``` r
-february |> 
-  filter(changes <= 3) |> 
+march |> 
+  filter(changes <= 2,
+         hour(start) > 7) |> 
   mutate(date = as.Date(start),
-         hour(start) > 5) |> 
+         weekday = wday(start, label = TRUE)) |> 
   group_by(date) |> 
-  slice_min(price, n = 1) |> 
-  ggplot(aes(x = date, y = price)) +
+  slice_min(price, n = 1, with_ties = FALSE) |> 
+  ggplot(aes(x = date, y = price, label = weekday)) +
   geom_col() +
+  geom_text(hjust = 0, angle = 90) +
   labs(x = NULL, y = NULL, 
-       title = "Cheapest price per day with <= 3 changes") +
+       title = "Cheapest price per day with <= 2 changes and after 7am") +
   scale_y_continuous(labels = function(x) paste0(x, "€")) +
   theme_minimal()
 ```
@@ -202,7 +206,7 @@ historic <- bahn_search(
 ```
 
 I do not parse the results here to be able to explore the data a bit
-more (parsing only extracts the information that I found intresting on
+more (parsing only extracts the information that I found interesting on
 first glance). However, the results contain a message that the
 connection is in the past and information about price and demand seem
 absent.
